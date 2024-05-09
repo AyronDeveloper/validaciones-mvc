@@ -168,6 +168,14 @@ class Validation{
         unset($_SESSION["formValidation"][$name]);
     }
 
+    public static function limpiarExcep($name){
+        foreach($_SESSION["formValidation"] as $session=>$valor){
+            if($session!==$name){
+                unset($_SESSION["formValidation"][$session]);
+            }
+        }
+    }
+
     public static function success($name){
         if(isset($_SESSION["formValidation"][$name]) && $_SESSION["formValidation"][$name]!=false){
             return true;
@@ -187,31 +195,4 @@ class Validation{
     }
 
 }
-
-//$validaciones= new FormValidation();
-/*$años=$validaciones->vacio("1")->esNumero()->esCadena()->validationsResults();
-if($años["result"]){
-    echo $años["variable"];
-    echo "<br>";
-    echo $años["message"];
-}
-echo "<hr>";
-$años02=$validaciones->vacio("12")->esIgual(12)->noEsIgual(15)->validationsResults();
-echo $años02["variable"];
-echo "<br>";
-echo $años02["message"];
-echo "<hr>";
-$años02=$validaciones->vacio("ayron@ayron.com")->esEmail()->validationsResults();
-echo $años02["variable"];
-echo "<br>";
-echo $años02["message"];*/
-
-
-//$validaciones->vacio("nombre","ayron")->esCadena();
-
-//$validaciones->vacio("apellido","Acuña")->esCadena()->validationsResults();
-
-//var_dump($_SESSION["formValidation"]);
-//$validaciones->clearValidations();
-//header("Location: ./prueba2.php");
 ?>
