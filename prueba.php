@@ -5,7 +5,7 @@ class Validation{
     public $result;
     public $message;
 
-    public function vacio($name,$var){
+    public function vacio($name,$var,$error=null,$message=null){
 
         $this->name="";
         $this->variable="";
@@ -16,113 +16,119 @@ class Validation{
         if(!empty($var)){
             $this->result=true;
             $this->variable=$var;
-            $this->message="validated";
+            $this->message=$message==null?"validated":$message;
             $this->name=$name;
 
             $_SESSION["formValidation"][$this->name]=$this->variable;
         }else{
             $this->result=false;
-            $this->message="vacio Error";
+            $this->message=$error==null?"vacio Error":$error;
             $this->name=$name;
             
             $_SESSION["formValidation"][$this->name]=$this->result;
         }
+        $_SESSION["formValidation"][$this->name."Men"]=$this->message;
         return $this;
     }
 
-    public function esNumero(){
+    public function esNumero($error=null,$message=null){
         if($this->result==true){
             if(is_numeric($this->variable)){
                 $this->result=true;
-                $this->message="validated";
+                $this->message=$message==null?"validated":$message;
                 
                 $_SESSION["formValidation"][$this->name]=$this->variable;
             }else{
                 $this->variable="";
-                $this->message="esNumero Error";
+                $this->message=$error==null?"esNumero Error":$error;
                 $this->result=false;
                 
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
         }
         return $this;
     }
 
-    public function esCadena(){
+    public function esCadena($error=null,$message=null){
         if($this->result==true){
             if(is_string($this->variable)){
                 $this->result=true;
-                $this->message="validated";
+                $this->message=$message==null?"validated":$message;
 
                 $_SESSION["formValidation"][$this->name]=$this->variable;
             }else{
                 $this->variable="";
-                $this->message="esCadena Error";
+                $this->message=$error==null?"esCadena Error":$error;
                 $this->result=false;
                 
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
         }
         return $this;
     }
 
-    public function igualA($optional){
+    public function igualA($optional,$error=null,$message=null){
         if($this->result==true){
             if($this->variable==$optional){
                 $this->result=true;
-                $this->message="validated";
+                $this->message=$message==null?"validated":$message;
                 
                 $_SESSION["formValidation"][$this->name]=$this->variable;
             }else{
                 $this->result=false;
                 $this->variable="";
-                $this->message="esIgual Error";
+                $this->message=$error==null?"esIgual Error":$error;
                 
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
         }
         return $this;
     }
 
-    public function diferenteA($optional){
+    public function diferenteA($optional,$error=null,$message=null){
         if($this->result==true){
             if($this->variable!=$optional){
                 $this->result=true;
-                $this->message="validated";
+                $this->message=$message==null?"validated":$message;
 
                 $_SESSION["formValidation"][$this->name]=$this->variable;
             }else{
                 $this->result=false;
                 $this->variable="";
-                $this->message="noEsIgual Error";
+                $this->message=$error==null?"noEsIgual Error":$error;
 
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
         }
         return $this;
     }
 
 
-    public function esEmail(){
+    public function esEmail($error=null,$message=null){
         if($this->result==true){
             //strpos($this->variable,"@") && strpos($this->variable,".")
             if(false !== strpos($this->variable, "@") && false !== strpos($this->variable, ".")){
                 $this->result=true;
-                $this->message="validated";
+                $this->message=$message==null?"validated":$message;
                 
                 $_SESSION["formValidation"][$this->name]=$this->variable;
             }else{
                 $this->result=false;
                 $this->variable="";
-                $this->message="esEmail Error";
+                $this->message=$error==null?"esEmail Error":$error;
 
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
         }
         return $this;
     }
 
-    public function esBoolean($name, $bool){
+    public function esBoolean($name, $bool,$error=null,$message=null){
         $this->name="";
         $this->variable="";
         $this->result="";
@@ -135,21 +141,25 @@ class Validation{
             if($boolval!==null){// PHP 5
                 $this->result=true;
                 $this->variable=$boolval;
-                $this->message="validated";
+                $this->message=$message==null?"validated":$message;
                 $this->name=$name;
     
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }else{
                 $this->result=false;
-                $this->message="esBoolean Error";
+                $this->message=$error==null?"esBoolean Error":$error;
                 $this->name=$name;
                 
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
         }else{
             $this->result=false;
-            $this->message="esBoolean Error";
+            $this->message="Booleanos no reconocidos";
             $this->name=$name;
+
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
+            $_SESSION["formValidation"][$this->name]=$this->result;
         }
         return $this;
     }
@@ -166,12 +176,14 @@ class Validation{
 
     public static function limpiarSelect($name){
         unset($_SESSION["formValidation"][$name]);
+        unset($_SESSION["formValidation"][$name."Men"]);
     }
 
     public static function limpiarExcep($name){
         foreach($_SESSION["formValidation"] as $session=>$valor){
             if($session!==$name){
                 unset($_SESSION["formValidation"][$session]);
+                unset($_SESSION["formValidation"][$session."Men"]);
             }
         }
     }
@@ -191,6 +203,12 @@ class Validation{
     public static function failed($name){
         if(isset($_SESSION["formValidation"][$name]) && $_SESSION["formValidation"][$name]==false){
             return true;
+        }
+    }
+
+    public static function showMessage($name){
+        if(isset($_SESSION["formValidation"][$name])){
+            return $_SESSION["formValidation"][$name."Men"];
         }
     }
 
