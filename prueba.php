@@ -60,6 +60,45 @@ class Validation{
         return $this;
     }
 
+    public function esEntero($error=null,$message=null){
+        if($this->result==true){
+            if(is_int($this->variable)){
+                $this->result=true;
+                $this->message=$this->analisis($message)?"validated":$message;
+                
+                $_SESSION["formValidation"][$this->name]=$this->variable;
+            }else{
+                $this->variable="";
+                $this->message=$this->analisis($error)?"esEntero Error":$error;
+                $this->result=false;
+                
+                $_SESSION["formValidation"][$this->name]=$this->result;
+            }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
+        }
+        return $this;
+    }
+
+    public function esDecimal($error=null,$message=null){
+        if($this->result==true){
+            if(is_double($this->variable)){
+                $this->result=true;
+                $this->message=$this->analisis($message)?"validated":$message;
+                
+                $_SESSION["formValidation"][$this->name]=$this->variable;
+            }else{
+                $this->variable="";
+                $this->message=$this->analisis($error)?"esDecimal Error":$error;
+                $this->result=false;
+                
+                $_SESSION["formValidation"][$this->name]=$this->result;
+            }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
+        }
+        return $this;
+    }
+    
+
     public function esCadena($only=null,$error=null,$message=null){
         if($this->result==true){
             if(is_string($this->variable)){
