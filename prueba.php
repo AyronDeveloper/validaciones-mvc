@@ -35,7 +35,7 @@ class Validation{
         if($this->result==true){
             if(is_numeric($this->variable)){
                 $this->result=true;
-                $this->message=$message==null?"validated":$message;
+                $this->message=$message==null || $message==""?"validated":$message;
                 
                 $_SESSION["formValidation"][$this->name]=$this->variable;
             }else{
@@ -50,7 +50,7 @@ class Validation{
         return $this;
     }
 
-    public function esCadena($error=null,$message=null){
+    public function esCadena($only=null,$error=null,$message=null){
         if($this->result==true){
             if(is_string($this->variable)){
                 $this->result=true;
@@ -139,12 +139,21 @@ class Validation{
             $boolval=filter_var($bool, FILTER_VALIDATE_BOOLEAN); //PHP 5
             //if(is_bool($boolval)){
             if($boolval!==null){// PHP 5
-                $this->result=true;
-                $this->variable=$boolval;
-                $this->message=$message==null?"validated":$message;
-                $this->name=$name;
-    
-                $_SESSION["formValidation"][$this->name]=$this->result;
+                if($boolval){
+                    $this->result=true;
+                    $this->variable=$boolval;
+                    $this->message=$message==null?"validated":$message;
+                    $this->name=$name;
+        
+                    $_SESSION["formValidation"][$this->name]=$this->result;
+                }else{
+                    $this->result=false;
+                    $this->variable=$boolval;
+                    $this->message=$error==null?"validated":$error;
+                    $this->name=$name;
+        
+                    $_SESSION["formValidation"][$this->name]=$this->result;
+                }
             }else{
                 $this->result=false;
                 $this->message=$error==null?"esBoolean Error":$error;
