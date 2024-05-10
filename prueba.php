@@ -5,6 +5,16 @@ class Validation{
     public $result;
     public $message;
 
+    private function analisis($analisis){
+        $analisis=trim($analisis);
+        if($analisis==null || $analisis==""){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
     public function vacio($name,$var,$error=null,$message=null){
 
         $this->name="";
@@ -16,13 +26,13 @@ class Validation{
         if(!empty($var)){
             $this->result=true;
             $this->variable=$var;
-            $this->message=$message==null?"validated":$message;
+            $this->message=$this->analisis($message)?"validated":$message;
             $this->name=$name;
 
             $_SESSION["formValidation"][$this->name]=$this->variable;
         }else{
             $this->result=false;
-            $this->message=$error==null?"vacio Error":$error;
+            $this->message=$this->analisis($error)?"vacio Error":$error;
             $this->name=$name;
             
             $_SESSION["formValidation"][$this->name]=$this->result;
@@ -35,12 +45,12 @@ class Validation{
         if($this->result==true){
             if(is_numeric($this->variable)){
                 $this->result=true;
-                $this->message=$message==null || $message==""?"validated":$message;
+                $this->message=$this->analisis($message)?"validated":$message;
                 
                 $_SESSION["formValidation"][$this->name]=$this->variable;
             }else{
                 $this->variable="";
-                $this->message=$error==null?"esNumero Error":$error;
+                $this->message=$this->analisis($error)?"esNumero Error":$error;
                 $this->result=false;
                 
                 $_SESSION["formValidation"][$this->name]=$this->result;
@@ -54,12 +64,12 @@ class Validation{
         if($this->result==true){
             if(is_string($this->variable)){
                 $this->result=true;
-                $this->message=$message==null?"validated":$message;
+                $this->message=$this->analisis($message)?"validated":$message;
 
                 $_SESSION["formValidation"][$this->name]=$this->variable;
             }else{
                 $this->variable="";
-                $this->message=$error==null?"esCadena Error":$error;
+                $this->message=$this->analisis($error)?"esCadena Error":$error;
                 $this->result=false;
                 
                 $_SESSION["formValidation"][$this->name]=$this->result;
@@ -73,13 +83,13 @@ class Validation{
         if($this->result==true){
             if($this->variable==$optional){
                 $this->result=true;
-                $this->message=$message==null?"validated":$message;
+                $this->message=$this->analisis($message)?"validated":$message;
                 
                 $_SESSION["formValidation"][$this->name]=$this->variable;
             }else{
                 $this->result=false;
                 $this->variable="";
-                $this->message=$error==null?"esIgual Error":$error;
+                $this->message=$this->analisis($error)?"igualA Error":$error;
                 
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }
@@ -92,13 +102,13 @@ class Validation{
         if($this->result==true){
             if($this->variable!=$optional){
                 $this->result=true;
-                $this->message=$message==null?"validated":$message;
+                $this->message=$this->analisis($message)?"validated":$message;
 
                 $_SESSION["formValidation"][$this->name]=$this->variable;
             }else{
                 $this->result=false;
                 $this->variable="";
-                $this->message=$error==null?"noEsIgual Error":$error;
+                $this->message=$this->analisis($error)?"diferenteA Error":$error;
 
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }
@@ -113,13 +123,51 @@ class Validation{
             //strpos($this->variable,"@") && strpos($this->variable,".")
             if(false !== strpos($this->variable, "@") && false !== strpos($this->variable, ".")){
                 $this->result=true;
-                $this->message=$message==null?"validated":$message;
+                $this->message=$this->analisis($message)?"validated":$message;
                 
                 $_SESSION["formValidation"][$this->name]=$this->variable;
             }else{
                 $this->result=false;
                 $this->variable="";
                 $this->message=$error==null?"esEmail Error":$error;
+
+                $_SESSION["formValidation"][$this->name]=$this->result;
+            }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
+        }
+        return $this;
+    }
+
+    public function longitudMax($lon,$error=null,$message=null){
+        if($this->result==true){
+            if(strlen($this->variable)==$lon || strlen($this->variable)<=$lon){
+                $this->result=true;
+                $this->message=$this->analisis($message)?"validated":$message;
+
+                $_SESSION["formValidation"][$this->name]=$this->variable;
+            }else{
+                $this->result=false;
+                $this->variable="";
+                $this->message=$error==null?"longitudMax Error":$error;
+
+                $_SESSION["formValidation"][$this->name]=$this->result;
+            }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
+        }
+        return $this;
+    }
+    
+    public function longitudMin($lon,$error=null,$message=null){
+        if($this->result==true){
+            if(strlen($this->variable)==$lon || strlen($this->variable)>=$lon){
+                $this->result=true;
+                $this->message=$this->analisis($message)?"validated":$message;
+
+                $_SESSION["formValidation"][$this->name]=$this->variable;
+            }else{
+                $this->result=false;
+                $this->variable="";
+                $this->message=$error==null?"longitudMin Error":$error;
 
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }
@@ -142,21 +190,21 @@ class Validation{
                 if($boolval){
                     $this->result=true;
                     $this->variable=$boolval;
-                    $this->message=$message==null?"validated":$message;
+                    $this->message=$this->analisis($message)?"validated TRUE":$message;
                     $this->name=$name;
         
                     $_SESSION["formValidation"][$this->name]=$this->result;
                 }else{
                     $this->result=false;
                     $this->variable=$boolval;
-                    $this->message=$error==null?"validated":$error;
+                    $this->message=$this->analisis($error)?"validated FALSE":$error;
                     $this->name=$name;
         
                     $_SESSION["formValidation"][$this->name]=$this->result;
                 }
             }else{
                 $this->result=false;
-                $this->message=$error==null?"esBoolean Error":$error;
+                $this->message="esBoolean Error";
                 $this->name=$name;
                 
                 $_SESSION["formValidation"][$this->name]=$this->result;
@@ -172,6 +220,8 @@ class Validation{
         }
         return $this;
     }
+
+
 
     public function results(){
         return array("variable"=>$this->variable,"result"=>$this->result,"message"=>$this->message);
