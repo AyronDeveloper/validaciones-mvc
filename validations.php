@@ -205,7 +205,7 @@ class Validation{
             }else{
                 $this->result=false;
                 $this->variable="";
-                $this->message=$error==null?"longitudMax Error":$error;
+                $this->message=$this->analisis($error)?"longitudMax Error":$error;
 
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }
@@ -224,7 +224,7 @@ class Validation{
             }else{
                 $this->result=false;
                 $this->variable="";
-                $this->message=$error==null?"longitudMin Error":$error;
+                $this->message=$this->analisis($error)?"longitudMin Error":$error;
 
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }
@@ -241,9 +241,9 @@ class Validation{
         
         if($bool=="true" || $bool=="false" || $bool=="1" || $bool=="0"){
             //$boolval=boolval($bool);
-            $boolval=filter_var($bool, FILTER_VALIDATE_BOOLEAN); //PHP 5
+            $boolval=filter_var($bool, FILTER_VALIDATE_BOOLEAN);//PHP 5
             //if(is_bool($boolval)){
-            if($boolval!==null){// PHP 5
+            if($boolval!==null){//PHP 5
                 if($boolval){
                     $this->result=true;
                     $this->variable=$boolval;
@@ -279,6 +279,46 @@ class Validation{
     }
 
 
+    public function esArray($name, $array, $error=null, $message=null){
+        $this->name="";
+        $this->variable="";
+        $this->result="";
+        $this->message="";
+
+        if(is_array($array)){
+            $this->result=true;
+            $this->variable=$array;
+            $this->message=$this->analisis($message)?"validated":$message;
+            $this->name=$name;
+
+            $_SESSION["formValidation"][$this->name]=$this->variable;
+        }else{
+            $this->result=false;
+            $this->variable="";
+            $this->message=$this->analisis($error)?"esArray error":$error;
+            $this->name=$name;
+
+            $_SESSION["formValidation"][$this->name]=$this->result;
+        }
+        $_SESSION["formValidation"][$this->name."Men"]=$this->message;
+        return $this;
+    }
+
+
+    /*public function arrayVacio($indice=null,$error=null,$message=null){
+        if($this->result==true){
+            if($indice!=null){
+                $this->result=true;
+                $countArray=count($this->variable,$indice);
+                $this->variable=array($this->variable,$countArray);
+                
+            }else{
+                $this->result=false;
+            }
+        }
+        return $this;
+    }*/
+
 
     public function results(){
         return array("variable"=>$this->variable,"result"=>$this->result,"message"=>$this->message);
@@ -310,9 +350,13 @@ class Validation{
         }
     }
 
-    public static function valor($name){
+    public static function valor($name,$indice=null){
         if(isset($_SESSION["formValidation"][$name]) && $_SESSION["formValidation"][$name]!=false){
-            return $_SESSION["formValidation"][$name];
+            if($indice!=null){
+                return $_SESSION["formValidation"][$name][$indice];
+            }else{
+                return $_SESSION["formValidation"][$name];
+            }
         }
     }
 
