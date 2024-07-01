@@ -1,5 +1,5 @@
 <?php
-class Validation{
+class Vali{
     public $name="";
     public $variable;
     public $result;
@@ -305,19 +305,14 @@ class Validation{
     }
 
 
-    /*public function arrayVacio($indice=null,$error=null,$message=null){
-        if($this->result==true){
-            if($indice!=null){
-                $this->result=true;
-                $countArray=count($this->variable,$indice);
-                $this->variable=array($this->variable,$countArray);
-                
-            }else{
-                $this->result=false;
-            }
+
+    public static function create($name,$valor,$message=null){
+        $_SESSION["formValidation"][$name]=$valor;
+        if($message!=null){
+            $_SESSION["formValidation"][$name."Men"]=$message;
         }
-        return $this;
-    }*/
+    }
+
 
 
     public function results(){
