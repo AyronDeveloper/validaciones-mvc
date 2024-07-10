@@ -178,7 +178,8 @@ class Vali{
     public function esEmail($error=null,$message=null){
         if($this->result==true){
             //strpos($this->variable,"@") && strpos($this->variable,".")
-            if(false !== strpos($this->variable,"@") && false !== strpos($this->variable,".")){
+            if(filter_var($this->variable, FILTER_VALIDATE_EMAIL)){
+            //if(false !== strpos($this->variable,"@") && false !== strpos($this->variable,".")){
                 $this->result=true;
                 $this->message=$this->analisis($message)?"validated":$message;
                 
@@ -186,7 +187,7 @@ class Vali{
             }else{
                 $this->result=false;
                 $this->variable="";
-                $this->message=$error==null?"esEmail Error":$error;
+                $this->message=$this->analisis($error)?"esEmail Error":$error;
 
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }
