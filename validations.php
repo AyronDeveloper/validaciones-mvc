@@ -1,9 +1,9 @@
 <?php
 class Vali{
-    public $name="";
-    public $variable;
-    public $result;
-    public $message;
+    private $name="";
+    private $variable;
+    private $result;
+    private $message;
 
     private function analisis($analisis){
         $analisis=trim($analisis);
@@ -15,17 +15,18 @@ class Vali{
     }
 
 
-    public function vacio($name,$var,$error=null,$message=null){
+    //required
+    public function vacio($name,$value,$error=null,$message=null){
 
         $this->name="";
         $this->variable="";
         $this->result="";
         $this->message="";
 
-        $var=trim($var);
-        if(!empty($var)){
+        $value=trim($value);
+        if(!empty($value)){
             $this->result=true;
-            $this->variable=$var;
+            $this->variable=$value;
             $this->message=$this->analisis($message)?"validated":$message;
             $this->name=$name;
 
@@ -41,6 +42,7 @@ class Vali{
         return $this;
     }
 
+    //isNumber
     public function esNumero($error=null,$message=null){
         if($this->result==true){
             if(is_numeric($this->variable)){
@@ -60,6 +62,7 @@ class Vali{
         return $this;
     }
 
+    //isInteger
     public function esEntero($error=null,$message=null){
         if($this->result==true){
             if(false === strpos($this->variable,".")){
@@ -88,6 +91,7 @@ class Vali{
         return $this;
     }
 
+    //isFloat
     public function esDecimal($error=null,$message=null){
         if($this->result==true){
             if(false !== strpos($this->variable,".")){
@@ -116,7 +120,7 @@ class Vali{
         return $this;
     }
     
-
+    //isString
     public function esCadena($only=null,$error=null,$message=null){
         if($this->result==true){
             if(is_string($this->variable)){
@@ -136,6 +140,7 @@ class Vali{
         return $this;
     }
 
+    //equalTo
     public function igualA($optional,$error=null,$message=null){
         if($this->result==true){
             if($this->variable==$optional){
@@ -155,6 +160,7 @@ class Vali{
         return $this;
     }
 
+    //differentTo
     public function diferenteA($optional,$error=null,$message=null){
         if($this->result==true){
             if($this->variable!=$optional){
@@ -174,7 +180,7 @@ class Vali{
         return $this;
     }
 
-
+    //isEmail
     public function esEmail($error=null,$message=null){
         if($this->result==true){
             //strpos($this->variable,"@") && strpos($this->variable,".")
@@ -196,6 +202,7 @@ class Vali{
         return $this;
     }
 
+    //lenMax
     public function longitudMax($lon,$error=null,$message=null){
         if($this->result==true){
             if(strlen($this->variable)==$lon || strlen($this->variable)<=$lon){
@@ -215,6 +222,7 @@ class Vali{
         return $this;
     }
     
+    //lenMin
     public function longitudMin($lon,$error=null,$message=null){
         if($this->result==true){
             if(strlen($this->variable)==$lon || strlen($this->variable)>=$lon){
@@ -234,6 +242,41 @@ class Vali{
         return $this;
     }
 
+
+    public function uploadFile($name, $arrayFile, $error=null, $message=null){
+        $this->name="";
+        $this->variable="";
+        $this->result="";
+        $this->message="";
+
+        
+        $this->name=$name;
+
+        if($arrayFile["error"]==0){
+            $this->result=true;
+            $this->variable=$arrayFile;
+            $this->$message=$this->analisis($message)?"validated":$message;
+            $_SESSION["formValidation"][$this->name]=$this->variable;
+        }else{
+            $this->result=false;
+            $this->$message=$this->analisis($error)?"validated Error":$error;
+            $_SESSION["formValidation"][$this->name]=$this->result;
+        }
+        $_SESSION["formValidation"][$this->name."Men"]=$this->message;
+
+        return $this;
+
+    }
+
+    public function sizeFile(){
+
+    }
+
+    public function typeFile(){
+
+    }
+
+    //isBoolean
     public function esBoolean($name, $bool,$error=null,$message=null){
         $this->name="";
         $this->variable="";
@@ -279,7 +322,7 @@ class Vali{
         return $this;
     }
 
-
+    //isArray
     public function esArray($name, $array, $error=null, $message=null){
         $this->name="";
         $this->variable="";
@@ -306,7 +349,7 @@ class Vali{
     }
 
 
-
+    //create
     public static function create($name,$valor,$message=null){
         $_SESSION["formValidation"][$name]=$valor;
         if($message!=null){
@@ -316,21 +359,25 @@ class Vali{
 
 
 
-    public function results(){
-        return array("variable"=>$this->variable,"result"=>$this->result,"message"=>$this->message);
+    public function results($value=null){
+        if($value=="value"){
+            return $this->variable;
+        }else{
+            return array("variable"=>$this->variable,"result"=>$this->result,"message"=>$this->message);
+        }
     }
 
 
-
+    //clear
     public static function limpiar(){
         unset($_SESSION["formValidation"]);
     }
-
+    //clearSelect
     public static function limpiarSelect($name){
         unset($_SESSION["formValidation"][$name]);
         unset($_SESSION["formValidation"][$name."Men"]);
     }
-
+    //clearExcep
     public static function limpiarExcep($name){
         foreach($_SESSION["formValidation"] as $session=>$valor){
             if($session!==$name){
@@ -345,7 +392,7 @@ class Vali{
             return true;
         }
     }
-
+    //value
     public static function valor($name,$indice=null){
         if(isset($_SESSION["formValidation"][$name]) && $_SESSION["formValidation"][$name]!=false){
             if($indice!=null){
