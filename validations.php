@@ -15,8 +15,8 @@ class Vali{
     }
 
 
-    //required
-    public function vacio($name,$value,$error=null,$message=null){
+    //REQUIRED VALIDA SI UN CAMPO ESTA VACIO
+    public function required($name,$value,$error=null,$message=null){
 
         $this->name="";
         $this->variable="";
@@ -43,7 +43,7 @@ class Vali{
     }
 
     //isNumber
-    public function esNumero($error=null,$message=null){
+    public function isNumber($error=null,$message=null){
         if($this->result==true){
             if(is_numeric($this->variable)){
                 $this->result=true;
@@ -63,7 +63,7 @@ class Vali{
     }
 
     //isInteger
-    public function esEntero($error=null,$message=null){
+    public function isInteger($error=null,$message=null){
         if($this->result==true){
             if(false === strpos($this->variable,".")){
                 $entero=intval($this->variable);
@@ -92,7 +92,7 @@ class Vali{
     }
 
     //isFloat
-    public function esDecimal($error=null,$message=null){
+    public function isFloat($error=null,$message=null){
         if($this->result==true){
             if(false !== strpos($this->variable,".")){
                 $double=doubleval($this->variable);
@@ -121,7 +121,7 @@ class Vali{
     }
     
     //isString
-    public function esCadena($only=null,$error=null,$message=null){
+    public function isString($only=null,$error=null,$message=null){
         if($this->result==true){
             if(is_string($this->variable)){
                 $this->result=true;
@@ -141,7 +141,7 @@ class Vali{
     }
 
     //equalTo
-    public function igualA($optional,$error=null,$message=null){
+    public function equalTo($optional,$error=null,$message=null){
         if($this->result==true){
             if($this->variable==$optional){
                 $this->result=true;
@@ -161,7 +161,7 @@ class Vali{
     }
 
     //differentTo
-    public function diferenteA($optional,$error=null,$message=null){
+    public function differentTo($optional,$error=null,$message=null){
         if($this->result==true){
             if($this->variable!=$optional){
                 $this->result=true;
@@ -181,7 +181,7 @@ class Vali{
     }
 
     //isEmail
-    public function esEmail($error=null,$message=null){
+    public function isEmail($error=null,$message=null){
         if($this->result==true){
             //strpos($this->variable,"@") && strpos($this->variable,".")
             if(filter_var($this->variable, FILTER_VALIDATE_EMAIL)){
@@ -203,7 +203,7 @@ class Vali{
     }
 
     //lenMax
-    public function longitudMax($lon,$error=null,$message=null){
+    public function lenMax($lon,$error=null,$message=null){
         if($this->result==true){
             if(strlen($this->variable)==$lon || strlen($this->variable)<=$lon){
                 $this->result=true;
@@ -223,7 +223,7 @@ class Vali{
     }
     
     //lenMin
-    public function longitudMin($lon,$error=null,$message=null){
+    public function lenMin($lon,$error=null,$message=null){
         if($this->result==true){
             if(strlen($this->variable)==$lon || strlen($this->variable)>=$lon){
                 $this->result=true;
@@ -234,6 +234,76 @@ class Vali{
                 $this->result=false;
                 $this->variable="";
                 $this->message=$this->analisis($error)?"longitudMin Error":$error;
+
+                $_SESSION["formValidation"][$this->name]=$this->result;
+            }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
+        }
+        return $this;
+    }
+
+    public function isColor($error=null, $message=null){
+        if($this->result==true){
+            
+            function validateColor($color){
+                $hexColor="/^#[0-9A-Fa-f]{6}$/";
+
+                if(preg_match($hexColor,$color)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            if(validateColor($this->variable)){
+                $this->result=true;
+                $this->message=$this->analisis($message)?"validate":$message;
+
+                $_SESSION["formValidation"][$this->name]=$this->variable;
+            }else{
+                $this->result=false;
+                $this->variable="";
+                $this->message=$this->analisis($error)?"isColor error":$error;
+
+                $_SESSION["formValidation"][$this->name]=$this->result;
+            }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
+        }
+        return $this;
+    }
+
+    public function validateDate($error=null,$message=null){
+        if($this->result==true){
+
+            function dateVerify($fecha){
+                $resultDate=false;
+
+                $formatDate="/^\d{4}-\d{2}-\d{2}$/";
+
+                if(preg_match($formatDate,$fecha)){
+                    $dateArray=explode("-",$fecha);
+        
+                    $anio=intval($dateArray[0]);
+                    $mes=intval($dateArray[1]);
+                    $dia=intval($dateArray[2]);
+
+                    if(checkdate($mes, $dia, $anio)){
+                        $resultDate=true;
+                    }
+                }
+
+                return $resultDate;
+            }
+
+            if(dateVerify($this->variable)){
+                $this->result=true;
+                $this->message=$this->analisis($message)?"validated":$message;
+
+                $_SESSION["formValidation"][$this->name]=$this->variable;
+            }else{
+                $this->result=false;
+                $this->variable="";
+                $this->message=$this->analisis($error)?"validateDate Error":$error;
 
                 $_SESSION["formValidation"][$this->name]=$this->result;
             }
@@ -255,11 +325,11 @@ class Vali{
         if($arrayFile["error"]==0){
             $this->result=true;
             $this->variable=$arrayFile;
-            $this->$message=$this->analisis($message)?"validated":$message;
+            $this->message=$this->analisis($message)?"validated":$message;
             $_SESSION["formValidation"][$this->name]=$this->variable;
         }else{
             $this->result=false;
-            $this->$message=$this->analisis($error)?"validated Error":$error;
+            $this->message=$this->analisis($error)?"uploadFile Error":$error;
             $_SESSION["formValidation"][$this->name]=$this->result;
         }
         $_SESSION["formValidation"][$this->name."Men"]=$this->message;
@@ -268,12 +338,75 @@ class Vali{
 
     }
 
-    public function sizeFile(){
+    public function sizeFile($limit, $size, $UA,$error=null, $message=null){
+        if($this->result==true){
+            $sizeResult=false;
 
+            $byte=1024;
+
+            if($UA=="KB"){
+                $sizeFile=$this->variable["size"]/$byte;
+            }elseif($UA=="byte"){
+                $sizeFile=$this->variable["size"];
+            }else{
+                $this->result=false;
+                $this->message="Error UA";
+                
+                $_SESSION["formValidation"][$this->name]=$this->result;
+            }
+
+
+            if($limit=="min"){
+                if($size<=$sizeFile){
+                    $sizeResult=true;
+                }
+            }elseif($limit=="max"){
+                if($size>=$sizeFile){
+                    $sizeResult=true;
+                }
+            }
+
+
+            if($sizeResult){
+                $this->result=true;
+                $this->message=$this->analisis($message)?"validated":$message;
+
+                $_SESSION["formValidation"][$this->name]=$this->variable;
+            }else{
+                $this->result=false;
+                $this->variable="";
+                $this->message=$this->analisis($error)?"sizeFile Error":$error;
+                
+                $_SESSION["formValidation"][$this->name]=$this->result;
+            }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
+        }
+        return $this;
     }
 
-    public function typeFile(){
+    public function typeFile($mime, $error=null, $message=null){
+        if($this->result==true){
+            $typeResult=false;
 
+            if(in_array($this->variable["type"],$mime)){
+                $typeResult=true;
+            }
+
+            if($typeResult){
+                $this->result=true;
+                $this->message=$this->analisis($message)?"validated":$message;
+
+                $_SESSION["formValidation"][$this->name]=$this->variable;
+            }else{
+                $this->result=false;
+                $this->variable="";
+                $this->message=$this->analisis($error)?"typeFile Error":$error;
+                
+                $_SESSION["formValidation"][$this->name]=$this->result;
+            }
+            $_SESSION["formValidation"][$this->name."Men"]=$this->message;
+        }
+        return $this;
     }
 
     //isBoolean
