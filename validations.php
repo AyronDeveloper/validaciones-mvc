@@ -526,13 +526,15 @@ class Vali{
         }
     }
     //value
-    public static function valor($name,$indice=null){
+    public static function valor($name,$var_exist=null,$indice=null){
         if(isset($_SESSION["formValidation"][$name]) && $_SESSION["formValidation"][$name]!=false){
             if($indice!=null){
                 return $_SESSION["formValidation"][$name][$indice];
             }else{
                 return $_SESSION["formValidation"][$name];
             }
+        }elseif($var_exist!=null || $var_exist!=""){
+            return $var_exist;
         }
     }
 
