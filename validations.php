@@ -5,6 +5,7 @@ class Vali{
     private $result;
     private $message;
 
+
     private function analisis($analisis){
         $analisis=trim($analisis);
         if($analisis==null || $analisis==""){
@@ -410,7 +411,7 @@ class Vali{
     }
 
     //isBoolean
-    public function esBoolean($name, $bool,$error=null,$message=null){
+    public function isBoolean($name, $bool,$error=null,$message=null){
         $this->name="";
         $this->variable="";
         $this->result="";
@@ -456,7 +457,7 @@ class Vali{
     }
 
     //isArray
-    public function esArray($name, $array, $error=null, $message=null){
+    public function isArray($name, $array, $error=null, $message=null){
         $this->name="";
         $this->variable="";
         $this->result="";
@@ -526,18 +527,20 @@ class Vali{
         }
     }
     //value
-    public static function valor($name,$var_exist=null,$indice=null){
+    public static function value($name,$var_exist=null){
         if(isset($_SESSION["formValidation"][$name]) && $_SESSION["formValidation"][$name]!=false){
-            if($indice!=null){
-                return $_SESSION["formValidation"][$name][$indice];
-            }else{
-                return $_SESSION["formValidation"][$name];
-            }
-        }elseif($var_exist!=null || $var_exist!=""){
+            return $_SESSION["formValidation"][$name];
+        }elseif(!empty($var_exist)){
             return $var_exist;
         }
     }
 
+    public static function valueArray($name,$indice){
+        if(isset($_SESSION["formValidation"][$name]) && $_SESSION["formValidation"][$name]!=false){
+            return $_SESSION["formValidation"][$name][$indice];
+        }
+    }
+    
     public static function failed($name){
         if(isset($_SESSION["formValidation"][$name]) && $_SESSION["formValidation"][$name]==false){
             return true;
