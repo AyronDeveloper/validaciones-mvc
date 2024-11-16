@@ -9,11 +9,8 @@ class Vali{
 
     private function analisis($analisis){
         $analisis=trim($analisis);
-        if($analisis==null || $analisis==""){
-            return true;
-        }else{
-            return false;
-        }
+
+        return empty($analisis)?true:false;
     }
 
 
@@ -122,9 +119,10 @@ class Vali{
     }
     
     //isString
-    public function isString($only=null,$error=null,$message=null){
+    public function isString($error=null,$message=null){
         if($this->result==true){
-            if(is_string($this->variable)){
+            $regex='/^[A-Za-zñÑáéíóúÁÉÍÓÚ]+$/';
+            if(preg_match($regex, $this->variable)){
                 $this->result=true;
                 $this->message=$this->analisis($message)?"validated":$message;
 
@@ -440,6 +438,7 @@ class Vali{
         }
         return $this;
     }
+    
 
     //isBoolean
     public function isBoolean($name, $bool,$error=null,$message=null){
@@ -592,7 +591,7 @@ class Vali{
     }
 
     public static function valueArray($name,$indice){
-        if(isset($_SESSION["formValidation"][$name])){
+        if(isset($_SESSION["formValidation"][$name]) && $_SESSION["formValidation"][$name]!=false){
             return $_SESSION["formValidation"][$name][$indice];
         }
     }
@@ -610,18 +609,4 @@ class Vali{
     }
 
 }
-
-    /*public function notUse($caracteresNoPermitidos){
-         // Convertimos el array de caracteres no permitidos en un solo string
-        $patron = implode('', array_map('preg_quote', $caracteresNoPermitidos));
-        // Construimos el patrón de expresión regular
-        $patron = "/[$patron]/";
-
-        // Usamos preg_match para buscar cualquier coincidencia del patrón en el string
-        if (preg_match($patron, $this->variable)) {
-            return false; // Si hay una coincidencia, devolvemos false
-        }
-        return $this;
-    }*/
-
 ?>
